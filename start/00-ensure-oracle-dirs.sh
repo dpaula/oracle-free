@@ -146,6 +146,39 @@ df -h /opt/oracle/oradata 2>/dev/null || echo "[pre-init] Aviso: Não foi possí
 
 echo "[pre-init] Estrutura de diretórios Oracle preparada com sucesso!"
 
+# Validação do ambiente Oracle - verifica se SQL*Plus pode ser executado
+echo "[pre-init] Validando configuração do ambiente Oracle..."
+echo "[pre-init] ORACLE_HOME = $ORACLE_HOME"
+echo "[pre-init] PATH = $PATH"
+echo "[pre-init] LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
+
+# Verifica se ORACLE_HOME está definido
+if [ -z "$ORACLE_HOME" ]; then
+    echo "[pre-init] ✗ ERRO: ORACLE_HOME não está definido!"
+else
+    echo "[pre-init] ✓ ORACLE_HOME está definido: $ORACLE_HOME"
+    
+    # Verifica se o diretório ORACLE_HOME existe
+    if [ -d "$ORACLE_HOME" ]; then
+        echo "[pre-init] ✓ Diretório ORACLE_HOME existe"
+    else
+        echo "[pre-init] ! Aviso: Diretório ORACLE_HOME não existe ainda: $ORACLE_HOME"
+    fi
+fi
+
+# Verifica se sqlplus está no PATH
+if command -v sqlplus >/dev/null 2>&1; then
+    echo "[pre-init] ✓ sqlplus encontrado no PATH"
+    # Testa se sqlplus pode executar sem erro de biblioteca
+    if echo "exit" | sqlplus -V >/dev/null 2>&1; then
+        echo "[pre-init] ✓ sqlplus pode executar corretamente"
+    else
+        echo "[pre-init] ! sqlplus encontrado mas pode ter problemas de biblioteca"
+    fi
+else
+    echo "[pre-init] ! sqlplus não encontrado no PATH - será definido durante inicialização do Oracle"
+fi
+
 # Validação final crítica - verifica se todos os diretórios essenciais existem
 echo "[pre-init] Executando validação final da estrutura de diretórios..."
 

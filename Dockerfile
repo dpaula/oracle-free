@@ -25,6 +25,11 @@ ENV ORACLE_CHARACTERSET=AL32UTF8 \
     INIT_SGA_SIZE=1024 \
     INIT_PGA_SIZE=512
 
+# Configura PATH e LD_LIBRARY_PATH para SQL*Plus e ferramentas Oracle
+ENV PATH=$ORACLE_HOME/bin:$PATH \
+    LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH \
+    TNS_ADMIN=$ORACLE_HOME/network/admin
+
 # Copia scripts de inicialização (ordem alfabética garante execução sequencial)
 # 1. Script pré-inicialização para garantir diretórios (executa primeiro)
 COPY --chmod=0755 start/00-ensure-oracle-dirs.sh /container-entrypoint-initdb.d/00-ensure-oracle-dirs.sh
