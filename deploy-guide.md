@@ -17,6 +17,11 @@ TZ=America/Sao_Paulo
 ## Configuração de Volume
 Monte o volume em: `/opt/oracle/oradata`
 
+**Importante para Railway.com**: O volume será montado com permissões específicas do Railway.com. O script de inicialização irá automaticamente:
+- Criar a estrutura correta de diretórios Oracle (`FREE/FREEPDB1`, `FREE/pdbseed`)
+- Configurar as permissões adequadas para o usuário Oracle (UID 54321)
+- Aguardar até 60 segundos para o volume estar disponível
+
 ## O que a Configuração Faz
 
 1. **Imagem Base**: Usa `gvenzl/oracle-free:23.8-slim` (baseada no Oracle Linux)

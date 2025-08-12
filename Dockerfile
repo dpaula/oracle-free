@@ -12,7 +12,9 @@ RUN mkdir -p /opt/oracle/oradata && \
     chmod -R 755 /opt/oracle/oradata
 
 # Copia scripts de inicialização
-COPY --chmod=0755 start/ /container-entrypoint-startdb.d/
+# Script de permissões deve rodar primeiro (antes da inicialização do DB)
+COPY --chmod=0755 start/00-fix-oracle-perms.sh /container-entrypoint-initdb.d/
+COPY --chmod=0755 start/01-open-pdb.sql /container-entrypoint-startdb.d/
 COPY init/ /container-entrypoint-initdb.d/
 
 # Volta para o usuário oracle
