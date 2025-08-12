@@ -1,0 +1,11 @@
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+
+-- garante PDB aberta em todo boot
+ALTER PLUGGABLE DATABASE ALL OPEN;
+ALTER PLUGGABLE DATABASE FREEPDB1 SAVE STATE;
+
+-- atrás de proxy/NAT, evita anunciar host interno:
+ALTER SYSTEM SET LOCAL_LISTENER='(ADDRESS=(PROTOCOL=TCP)(HOST=0.0.0.0)(PORT=1521))' SCOPE=BOTH;
+
+-- força re-registro dos serviços no listener (resolve ORA-12514)
+ALTER SYSTEM REGISTER;
