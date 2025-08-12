@@ -1,14 +1,22 @@
 FROM gvenzl/oracle-free:23.8-slim
 
-# Copia scripts de inicialização com permissões corretas
+# Instala sudo para permitir que o usuário oracle execute comandos privilegiados
+USER root
+RUN apt-get update && apt-get install -y sudo && \
+    echo "oracle ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Cria o diretório de dados e configura permissões básicas
+RUN mkdir -p /opt/oracle/oradata && \
+    chown -R 54321:54321 /opt/oracle/oradata && \
+    chmod -R 755 /opt/oracle/oradata
+
+# Copia scripts de inicialização
 COPY --chmod=0755 start/ /container-entrypoint-startdb.d/
 COPY init/ /container-entrypoint-initdb.d/
 
-# Remove o USER - o script de permissões vai lidar com isso durante runtime
+# Volta para o usuário oracle
+USER 54321
 
-# Expõe a porta padrão do Oracle
+# Expõe a porta
 EXPOSE 1521
-
-# Define healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5m --retries=3 \
-  CMD /opt/oracle/product/23ai/dbhomeFree/bin/sqlplus -s sys/$$ORACLE_PASSWORD@localhost:1521/FREE as sysdba <<< "SELECT 1 FROM DUAL;" || exit 1
