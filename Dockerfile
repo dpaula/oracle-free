@@ -6,13 +6,9 @@ RUN microdnf update -y && microdnf install -y sudo && \
     echo "oracle ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     microdnf clean all
 
-# Cria estrutura completa de diretórios Oracle com permissões robustas
-# Isso garante que os diretórios existam independentemente do volume mounting
-RUN mkdir -p /opt/oracle/oradata/FREE/FREEPDB1 \
-             /opt/oracle/oradata/FREE/pdbseed \
-             /opt/oracle/oradata/FREE/controlfile \
-             /opt/oracle/oradata/FREE/onlinelog \
-             /opt/oracle/oradata/FREE/temp && \
+# Cria apenas o diretório base - a estrutura completa será criada pelos scripts de inicialização
+# Isso evita conflitos com o volume mounting do Railway.com
+RUN mkdir -p /opt/oracle/oradata && \
     chown -R 54321:54321 /opt/oracle/oradata && \
     chmod -R 755 /opt/oracle/oradata
 
@@ -21,7 +17,13 @@ ENV ORACLE_CHARACTERSET=AL32UTF8 \
     ORACLE_EDITION=free \
     ORACLE_PDB=FREEPDB1 \
     ORACLE_PWD=Oracle123 \
-    ORACLE_DATA=/opt/oracle/oradata
+    ORACLE_DATA=/opt/oracle/oradata \
+    ORACLE_BASE=/opt/oracle \
+    ORACLE_HOME=/opt/oracle/product/23c/dbhomeFree \
+    DBCA_TOTAL_MEMORY=2048 \
+    ENABLE_ARCHIVELOG=false \
+    INIT_SGA_SIZE=1024 \
+    INIT_PGA_SIZE=512
 
 # Copia scripts de inicialização (ordem alfabética garante execução sequencial)
 # 1. Script pré-inicialização para garantir diretórios (executa primeiro)
