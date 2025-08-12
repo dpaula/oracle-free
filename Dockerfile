@@ -17,6 +17,7 @@ ENV ORACLE_CHARACTERSET=AL32UTF8 \
     ORACLE_EDITION=free \
     ORACLE_PDB=FREEPDB1 \
     ORACLE_PWD=Oracle123 \
+    ORACLE_PASSWORD=Oracle123 \
     ORACLE_DATA=/opt/oracle/oradata \
     ORACLE_BASE=/opt/oracle \
     ORACLE_HOME=/opt/oracle/product/23c/dbhomeFree \
