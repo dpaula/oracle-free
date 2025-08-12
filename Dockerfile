@@ -2,9 +2,9 @@ FROM gvenzl/oracle-free:23.8-slim
 
 # Instala sudo para permitir que o usuário oracle execute comandos privilegiados
 USER root
-RUN apt-get update && apt-get install -y sudo && \
+RUN microdnf update -y && microdnf install -y sudo && \
     echo "oracle ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    microdnf clean all
 
 # Cria o diretório de dados e configura permissões básicas
 RUN mkdir -p /opt/oracle/oradata && \
